@@ -26,6 +26,7 @@ jobs:
       PRIVATE_REPO: "tranhongnghi419-bit/tim-3-diem-khac"
       PRIVATE_REF: "main"
       PYTHONUNBUFFERED: "1"
+      PERFORMANCE_REPORT_INTERVAL_SECONDS: "30"
       TOKENIZERS_PARALLELISM: "false"
       DIFFERENCE_FORGE_SEED: "${{ github.run_id }}-${{ github.run_attempt }}"
 
