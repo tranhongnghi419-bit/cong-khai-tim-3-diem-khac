@@ -46,7 +46,7 @@ jobs:
       # Prompts have no private state and no hash/index state. The runner scans
       # extra-prompts.txt from top to bottom and skips exact lines already present
       # in public prompt-usage.txt.
-      DF_GAME_COUNT: "10"
+      DF_GAME_COUNT: "2"
       CPU_DREAMSHAPER_STEPS: "8"
       YT_PRIVACY_STATUS: "public"  # private | public | unlisted
 
