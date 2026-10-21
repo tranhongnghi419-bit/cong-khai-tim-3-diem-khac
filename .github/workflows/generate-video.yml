@@ -247,7 +247,7 @@ jobs:
           sequence_path = Path("private-source/sequence_control_runner.py")
           sequence = sequence_path.read_text(encoding="utf-8")
           marker = "PUBLIC FOOD SCENE SPREAD CONTRACT v1"
-          needle = '    return formatted.replace("Main theme: . ", "", 1)\\n'
+          needle = '    return formatted.replace("Main theme: . ", "", 1)\n'
           replacement = '''    formatted = formatted.replace("Main theme: . ", "", 1)
               # PUBLIC FOOD SCENE SPREAD CONTRACT v1
               scene_contract = (
