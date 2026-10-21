@@ -233,7 +233,7 @@ jobs:
           quality = quality_path.read_text(encoding="utf-8")
           old_signature = "def detect_group_ready_candidates(image: Image.Image) -> list[dict[str, object]]:"
           new_signature = "def detect_group_ready_candidates(image: Image.Image, _raw_masks=None) -> list[dict[str, object]]:"
-          multiline_signature = "def detect_group_ready_candidates(\\n    image: Image.Image,\\n    _raw_masks=None,\\n) -> list[dict[str, object]]:"
+          multiline_signature = "def detect_group_ready_candidates(\n    image: Image.Image,\n    _raw_masks=None,\n) -> list[dict[str, object]]:"
           if old_signature in quality:
               quality = quality.replace(old_signature, new_signature, 1)
               quality_path.write_text(quality, encoding="utf-8")
