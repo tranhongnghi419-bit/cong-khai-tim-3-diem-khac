@@ -274,6 +274,7 @@ jobs:
           else:
               raise SystemExit("Workflow hotfix aborted: public scene prompt anchor changed")
           PYCODE
+          python -m py_compile private-source/quality_diversity_runner.py private-source/sequence_control_runner.py
 
       - uses: actions/setup-python@v5
         with:
