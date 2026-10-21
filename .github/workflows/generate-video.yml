@@ -246,35 +246,36 @@ jobs:
           # central dish. Give the detector enough separated, recognizable objects.
           sequence_path = Path("private-source/sequence_control_runner.py")
           sequence = sequence_path.read_text(encoding="utf-8")
-          marker = "PUBLIC FOOD SCENE SPREAD CONTRACT v1"
+          marker = "PUBLIC SCENE OBJECT SPREAD CONTRACT v2"
           needle = '    return formatted.replace("Main theme: . ", "", 1)\n'
           replacement = '''    formatted = formatted.replace("Main theme: . ", "", 1)
-              # PUBLIC FOOD SCENE SPREAD CONTRACT v1
+              # PUBLIC SCENE OBJECT SPREAD CONTRACT v2
               scene_contract = (
-                  " COMPOSITION REQUIREMENT: Keep the Japanese food theme and thick black-outline flat cartoon style, "
-                  "but use a wide tabletop still-life view, not a close-up. Keep the featured dish recognizable without "
-                  "letting it fill the frame. Include 12 to 18 separate, fully visible, medium-sized food and kitchen objects "
-                  "distributed across the entire 16:9 canvas, with clear pale-background gaps between neighboring objects. "
-                  "Arrange objects in loose rows across the left, center and right, including upper and lower areas; do not "
-                  "put everything in one central pile. Add recognizable standalone objects such as a ceramic tea cup, teapot, "
-                  "small soup bowl, separate plate, glass bottle, soy-sauce bottle, basket, vase with one flower, lantern, "
-                  "apple, orange, pear, bread roll and separate rice balls. Keep object silhouettes simple and unobstructed; "
-                  "no touching, overlap, piles, hidden objects, tiny garnish clutter, cropped objects or crossed chopsticks. "
-                  "Use broad visible surfaces suitable for a single-object color or pattern change. Keep the wood tabletop "
-                  "and pale cream background, and preserve the same illustration style."
+                  " COMPOSITION REQUIREMENT: Follow the exact theme and subject described in this prompt; "
+                  "do not substitute another theme or mix in unrelated object categories. Create one coherent, "
+                  "wide 16:9 scene viewed from a medium-wide distance, not a close-up. Include 8 to 12 distinct, "
+                  "fully visible, recognizable standalone objects or props that naturally belong to this scene. "
+                  "Arrange them across the left, middle and right parts of the canvas and across upper and lower "
+                  "areas; place major objects far apart rather than in one central cluster. Keep visible background "
+                  "gaps between objects: no touching, overlapping, stacked piles, cropped objects, or important objects "
+                  "hidden behind others. Prefer simple silhouettes, crisp outlines, strong local color contrast and "
+                  "broad visible surfaces that can support a color or pattern change. Include a few related tools, "
+                  "containers or decorations only when they naturally fit the stated theme. Do not add text, labels, "
+                  "logos, watermarks, split screens or collages. Leave safe margins around each major object, and avoid "
+                  "placing all major objects at the exact center of the frame."
               )
               return formatted + "\\n\\n" + scene_contract
           '''
           if needle in sequence:
               sequence = sequence.replace(needle, replacement, 1)
               sequence_path.write_text(sequence, encoding="utf-8")
-              print("[workflow-hotfix] added food-scene object-separation contract")
+              print("[workflow-hotfix] added theme-preserving scene object-spread contract")
           elif marker in sequence:
-              print("[workflow-hotfix] food-scene object-separation contract already present")
+              print("[workflow-hotfix] scene object-spread contract already present")
           else:
               raise SystemExit("Workflow hotfix aborted: public scene prompt anchor changed")
           PYCODE
-          python -m py_compile private-source/quality_diversity_runner.py private-source/sequence_control_runner.py
+          python -m py_compile private-source/difference_forge_cf.py private-source/closed_set_runner.py private-source/scene_intelligence_runner.py private-source/cpu_optimized_runner.py private-source/quality_diversity_runner.py private-source/vision_upgrade_runner.py private-source/sequence_control_runner.py
 
       - uses: actions/setup-python@v5
         with:
