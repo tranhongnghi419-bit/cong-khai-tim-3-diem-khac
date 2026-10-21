@@ -220,7 +220,60 @@ jobs:
 
       - name: Patch runtime resilience from private source
         working-directory: .
-        run: python private-source/runtime_resilience_patch.py private-source
+        run: |
+          python private-source/runtime_resilience_patch.py private-source
+          # Keep the fix in this public workflow: the private source is patched only
+          # inside the runner workspace and no private-repository commit is created.
+          python - <<'PYCODE'
+          from pathlib import Path
+
+          # Compatibility fix: the scene fallback can call this function with the
+          # precomputed raw masks as its second positional argument.
+          quality_path = Path("private-source/quality_diversity_runner.py")
+          quality = quality_path.read_text(encoding="utf-8")
+          old_signature = "def detect_group_ready_candidates(image: Image.Image) -> list[dict[str, object]]:"
+          new_signature = "def detect_group_ready_candidates(image: Image.Image, _raw_masks=None) -> list[dict[str, object]]:"
+          if old_signature in quality:
+              quality = quality.replace(old_signature, new_signature, 1)
+              quality_path.write_text(quality, encoding="utf-8")
+              print("[workflow-hotfix] fixed detect_group_ready_candidates call signature")
+          elif new_signature in quality:
+              print("[workflow-hotfix] detector signature fix already present")
+          else:
+              raise SystemExit("Workflow hotfix aborted: detector signature anchor changed")
+
+          # Keep the food-series topic, but avoid prompts that generate only one
+          # central dish. Give the detector enough separated, recognizable objects.
+          sequence_path = Path("private-source/sequence_control_runner.py")
+          sequence = sequence_path.read_text(encoding="utf-8")
+          marker = "PUBLIC FOOD SCENE SPREAD CONTRACT v1"
+          needle = '    return formatted.replace("Main theme: . ", "", 1)\\n'
+          replacement = '''    formatted = formatted.replace("Main theme: . ", "", 1)
+              # PUBLIC FOOD SCENE SPREAD CONTRACT v1
+              scene_contract = (
+                  " COMPOSITION REQUIREMENT: Keep the Japanese food theme and thick black-outline flat cartoon style, "
+                  "but use a wide tabletop still-life view, not a close-up. Keep the featured dish recognizable without "
+                  "letting it fill the frame. Include 12 to 18 separate, fully visible, medium-sized food and kitchen objects "
+                  "distributed across the entire 16:9 canvas, with clear pale-background gaps between neighboring objects. "
+                  "Arrange objects in loose rows across the left, center and right, including upper and lower areas; do not "
+                  "put everything in one central pile. Add recognizable standalone objects such as a ceramic tea cup, teapot, "
+                  "small soup bowl, separate plate, glass bottle, soy-sauce bottle, basket, vase with one flower, lantern, "
+                  "apple, orange, pear, bread roll and separate rice balls. Keep object silhouettes simple and unobstructed; "
+                  "no touching, overlap, piles, hidden objects, tiny garnish clutter, cropped objects or crossed chopsticks. "
+                  "Use broad visible surfaces suitable for a single-object color or pattern change. Keep the wood tabletop "
+                  "and pale cream background, and preserve the same illustration style."
+              )
+              return formatted + "\\n\\n" + scene_contract
+          '''
+          if needle in sequence:
+              sequence = sequence.replace(needle, replacement, 1)
+              sequence_path.write_text(sequence, encoding="utf-8")
+              print("[workflow-hotfix] added food-scene object-separation contract")
+          elif marker in sequence:
+              print("[workflow-hotfix] food-scene object-separation contract already present")
+          else:
+              raise SystemExit("Workflow hotfix aborted: public scene prompt anchor changed")
+          PYCODE
 
       - uses: actions/setup-python@v5
         with:
